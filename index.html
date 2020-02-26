@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title>Graham Trail</title>
+  <meta name="description" content="Graham Trail's Memory Game">
+  <meta name="author" content="Graham Trail">
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+<link href="https://fonts.googleapis.com/css?family=Pirata+One&display=swap" rel="stylesheet"> 
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/skeleton.css">
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="images/favicon.png">
+
+</head>
+<body style="background-color: #000; color: #fff">
+    
+ <!-- Primary Page Layout
+  –––––––––––––––––––––––––––––––––––––––––––––––––– --> 
+    <div id="victory">
+      <h1>Victory!</h1>
+      <p>You defeated all bosses in</p>
+      <h2><span id = finalCount>0</span> Attacks</h2>
+      <button class="button-primary" id ="restart">Play again?</button>
+    </div>    
+    
+    <div class="container">
+   
+    <div class="row">
+      <div class="twelve columns">
+        <h1>Memory Game</h1>
+        <p>Try to defeat these Dark Souls bosses with as few attacks as possible. Praise the sun!</p>
+      </div>
+    </div>
+    
+    <div class = "row cardGrid">
+      <div class = "three columns">
+        <div class="card">
+          <div class="overlay"></div>
+        </div>
+      </div>
+      <div class = "three columns">
+        <div class="card">
+          <div class="overlay"></div>
+        </div>
+      </div>  
+      <div class = "three columns">
+        <div class="card">
+          <div class="overlay"></div>
+        </div>
+      </div>  
+      <div class = "three columns">
+        <div class="card">
+          <div class="overlay"></div>
+        </div>
+      </div>
+    </div>    
+    <div class = "row cardGrid">
+      <div class = "three columns">
+       <div class="card">
+          <div class="overlay"></div>
+        </div>
+      </div>
+      <div class = "three columns">
+        <div class="card">
+          <div class="overlay"></div>
+        </div>
+      </div>  
+      <div class = "three columns">
+      <div class="card">
+          <div class="overlay"></div>
+        </div>
+      </div>  
+      <div class = "three columns">
+       <div class="card">
+          <div class="overlay"></div>
+        </div>
+      </div>
+    </div>
+    <div class = "row cardGrid">
+      <div class = "three columns">
+       <div class="card">
+          <div class="overlay"></div>
+        </div>
+      </div>
+      <div class = "three columns">
+        <div class="card">
+          <div class="overlay"></div>
+        </div>
+      </div>  
+      <div class = "three columns">
+       <div class="card">
+          <div class="overlay"></div>
+        </div>
+      </div>  
+      <div class = "three columns">
+       <div class="card">
+          <div class="overlay"></div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class = "column">
+      <p>Attacks: <span id = "atkCount">0</span></p>
+      </div>
+    </div>
+      
+</div>
+<!-- End Document and Scripts
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+<script>
+  
+  var clickable = true;  
+  
+  //Set up cards  
+  var cards = document.getElementsByClassName("card");    
+  var images = ["gargoyle.jpg", "gargoyle.jpg", "ornstein.jpg", "ornstein.jpg", "artorias.jpg", "artorias.jpg", "sif.jpg", "sif.jpg", "smough.jpg", "smough.jpg", "gapingdragon.jpg", "gapingdragon.jpg"]
+  shuffle(images);
+  let i = 0;
+  
+  for (let card of cards) {
+      card.addEventListener("click", () => selectCard(event.target));
+      card.value = images[i];
+      card.style["background-image"] = "url(media/" + images[i] + ")"
+      i++
+  }
+
+  //Select cards
+  var previousCard;
+  var countDisplay = document.querySelector("#atkCount");
+  var finalDisplay = document.querySelector("#finalCount");
+  var count = 0;    
+  var matches = 0;
+  var victoryScreen = document.querySelector("#victory");
+  var restartButton = document.querySelector("#restart");
+  restartButton.addEventListener("click", function() {
+      location.reload();
+  });    
+        
+  function selectCard(selected) {
+      // if it's first card clicked
+      if (previousCard === undefined) {
+        previousCard = selected;
+        console.log(selected);
+        selected.querySelector(".overlay").style["opacity"] = "0";
+        count++;
+        countDisplay.innerHTML = count;
+      
+      // if you try clicking the same card again
+      } else if (previousCard === selected) {
+          
+      // if it's second card with no match
+      } else if (previousCard.value !== selected.value && clickable) {
+          clickable = false;
+          selected.querySelector(".overlay").style["opacity"] = "0";
+          selected.style["border-color"] = "red";
+          previousCard.style["border-color"] = "red";
+          count++
+          countDisplay.innerHTML = count
+          setTimeout(function(){
+            selected.querySelector(".overlay").style["opacity"] = "1";
+            previousCard.querySelector(".overlay").style["opacity"] = "1";
+            previousCard.style["border-color"] = "#fff";
+            selected.style["border-color"] = "#fff";
+            previousCard = undefined;
+            clickable = true;
+          },1000);
+          
+      // if it's second card with match
+      } else if (previousCard.value === selected.value && clickable) {
+          clickable = false;
+          selected.querySelector(".overlay").style["opacity"] = "0";
+          selected.style["border-color"] = "gold";
+          previousCard.style["border-color"] = "gold";
+          count++;
+          matches++;
+          countDisplay.innerHTML = count;
+          setTimeout(function(){
+            previousCard = undefined;
+            clickable = true;
+          },500);
+          
+      }
+      if (matches === 6) {
+         setTimeout(function(){
+            victoryScreen.style["display"] = "block";
+            finalDisplay.innerHTML = count;
+          },500);
+        
+      }
+    }    
+    
+    // Shuffle function
+    function shuffle(arr) {    
+        for (let i = arr.length - 1; i > 0; i--) {
+            let j = Math.floor(Math.random() * (i+1));
+            let container = arr[i];
+            arr[i] = arr[j];
+            arr[j] = container;
+        }
+    }
+    
+</script>
+</body>
+</html>
